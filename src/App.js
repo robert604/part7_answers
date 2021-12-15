@@ -32,9 +32,16 @@ const App = () => {
     info('login resp',user)
     window.localStorage.setItem('loggedInUser',JSON.stringify(user))
     setLoggedInUser(user)
+    setUsernamePassword({username:'',password:''})    
   }
 
-  const loginForm = ()=>{
+  const logoutClick = async event=>{
+    window.localStorage.setItem('loggedInUser',null)
+    setLoggedInUser(null)
+    info('logged out')
+  }
+
+  const loggedOut = ()=>{
     return (
       <form>
         <h2>Login</h2>
@@ -53,20 +60,21 @@ const App = () => {
 
   const loggedIn = ()=>{
     return (
-      <div>{`${loggedInUser.name} logged in`}</div>
+      <div>
+        <div>
+          {`${loggedInUser.name} logged in `}
+          <button onClick={logoutClick}>Log out</button>
+        </div>
+        <h2>blogs</h2>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
+      </div>
     )
   }
 
   return (
-    loggedInUser ? 
-    <div>
-      {loggedIn()}
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-    : loginForm()
+    loggedInUser ? loggedIn() : loggedOut()
   )
 }
 
