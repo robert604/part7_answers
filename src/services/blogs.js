@@ -6,6 +6,16 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const toExport = {getAll}
+const addBlog = async (loggedInUser,newBlog)=>{
+  const config = {
+    headers:{
+      Authorization:`Bearer ${loggedInUser.token}`
+    }
+  }
+  const resp = await axios.post(baseUrl,newBlog,config)
+  return resp.body
+}
+
+const toExport = {getAll,addBlog}
 
 export default toExport
