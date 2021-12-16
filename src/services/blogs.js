@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { info } from '../utils/logger'
 const baseUrl = '/api/blogs'
 
 const getAll = () => {
@@ -12,8 +13,12 @@ const addBlog = async (loggedInUser,newBlog)=>{
       Authorization:`Bearer ${loggedInUser.token}`
     }
   }
-  const resp = await axios.post(baseUrl,newBlog,config)
-  return resp.body
+  try {
+    const resp = await axios.post(baseUrl,newBlog,config)
+    return resp.data    
+  } catch(error) {
+    throw new Error(JSON.stringify(error.response.data))
+  }
 }
 
 const toExport = {getAll,addBlog}

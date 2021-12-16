@@ -2,7 +2,7 @@ export const info = (...tolog)=>{
   console.log(...tolog)
 }
 
-export const error = (...tolog)=>{
+export const errorInfo = (...tolog)=>{
   console.error(...tolog)
 }
 
