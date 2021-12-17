@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import blogService from '../services/blogs'
 import _ from 'lodash'
 
+
+
 const Display = ({displayState,invert=false,style,children})=>{
   style = style ? style : {}
   if((displayState && invert) || (!displayState && !invert)) style.display='none'
@@ -17,7 +19,9 @@ const Display = ({displayState,invert=false,style,children})=>{
 
 
 const Blog = ({ blog,blogs,setBlogs }) => {
+
   const [viewDetails,setViewDetails] = useState(false)
+
 
   const likeit = async ()=>{
     const modified = {...blog}
@@ -140,6 +144,8 @@ const AddBlog = ({ params }) => {
 export const LoggedIn = ({ params }) => {
   const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp,setBlogs } = params
   const [blogFormShow,setBlogFormShow] = useState(false)
+
+  blogs.sort((a,b)=>a.likes-b.likes)
 
   const logoutClick = async event => {
     window.localStorage.setItem('loggedInUser', null)
