@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 //import { info, errorInfo } from '../utils/logger'
 import blogService from '../services/blogs'
 import _ from 'lodash'
+import PropTypes from 'prop-types'
 
 
 
@@ -17,11 +18,14 @@ const Display = ({displayState,invert=false,style,children})=>{
   )
 }
 
+Display.propTypes = {
+  displayState: PropTypes.bool.isRequired,
+}
 
 const Blog = ({params}) => {
   let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp } = params
   const [viewDetails,setViewDetails] = useState(false)
-  const isOwner = blog.user && loggedInUser && loggedInUser.username===blog.user.username
+  const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
 
   const likeit = async ()=>{
     const modified = {...blog}
