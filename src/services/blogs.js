@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { info } from '../utils/logger'
+//import { info } from '../utils/logger'
 const baseUrl = '/api/blogs'
 
 const getAll = () => {

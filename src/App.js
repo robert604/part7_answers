@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect} from 'react'
 import blogService from './services/blogs'
-import {info} from './utils/logger'
+//import {info} from './utils/logger'
 import {LoggedIn,LoggedOut, Notification} from './components/comps'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [usernamePassword, setUsernamePassword] = useState({username:'',password:''})
   const [loggedInUser,setLoggedInUser] = useState(null)
-  const [newBlogInfo,setNewBlogInfo] = useState({title:'',author:'',url:''})
   const [notification,setNotification] = useState(null)
 
   const setNotificationTemp = notification=>{
@@ -19,7 +18,6 @@ const App = () => {
     blogs,setBlogs,
     usernamePassword,setUsernamePassword,
     loggedInUser,setLoggedInUser,
-    newBlogInfo,setNewBlogInfo,
     notification,setNotification,setNotificationTemp,
   }
 
