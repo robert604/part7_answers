@@ -18,10 +18,10 @@ const Display = ({displayState,invert=false,style,children})=>{
 }
 
 
-const Blog = ({ blog,blogs,setBlogs }) => {
-
+const Blog = ({params}) => {
+  let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp } = params
   const [viewDetails,setViewDetails] = useState(false)
-
+  const isOwner = blog.user && loggedInUser && loggedInUser.username===blog.user.username
 
   const likeit = async ()=>{
     const modified = {...blog}
@@ -31,6 +31,21 @@ const Blog = ({ blog,blogs,setBlogs }) => {
     blogs = [...blogs]
     blogs.splice(ind,1,updated)
     setBlogs(blogs)
+  }
+
+  const deleteIt = async ()=>{
+    try {
+      const confirmed = await window.confirm(`delete blog ${blog.title} by ${blog.author}`)
+      if(confirmed) {
+        await blogService.deleteBlog(blog,loggedInUser)
+        const ind = _.findIndex(blogs,{id:blog.id})
+        blogs = [...blogs]
+        blogs.splice(ind,1)
+        setBlogs(blogs)
+      }
+    } catch(error) {
+      setNotificationTemp({text:error.message,isError:true})
+    }
   }
 
   const style = {
@@ -56,6 +71,9 @@ const Blog = ({ blog,blogs,setBlogs }) => {
         <div>
           {blog.user ? blog.user.name : ''}
         </div>
+        <Display displayState={isOwner}>
+          <button onClick={deleteIt} style={{background:'lightblue'}}>delete</button>
+        </Display>
       </Display>
     </div>
   )
@@ -142,7 +160,7 @@ const AddBlog = ({ params }) => {
 }
 
 export const LoggedIn = ({ params }) => {
-  const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp,setBlogs } = params
+  const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp } = params
   const [blogFormShow,setBlogFormShow] = useState(false)
 
   blogs.sort((a,b)=>a.likes-b.likes)
@@ -167,7 +185,7 @@ export const LoggedIn = ({ params }) => {
         <button onClick={()=>setBlogFormShow(true)}>Create New Blog</button>
       </Display>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}/>
+        <Blog key={blog.id} params={{...params,blog:blog}}/>
       )}
     </div>
   )

@@ -32,6 +32,20 @@ const updateBlog = async (updatedBlog)=>{
   }
 }
 
-const toExport = {getAll,addBlog,updateBlog}
+const deleteBlog = async (blog,loggedInUser)=>{
+  const config = {
+    headers:{
+      Authorization:`Bearer ${loggedInUser.token}`
+    }
+  }  
+  try {
+    const url = `${baseUrl}/${blog.id}`
+    await axios.delete(url,config)
+  } catch(error) {
+    throw new Error(JSON.stringify(error.response.data))
+  }
+}
+
+const toExport = {getAll,addBlog,updateBlog,deleteBlog}
 
 export default toExport
