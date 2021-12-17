@@ -2,7 +2,7 @@ import { login } from '../services/login'
 import React, { useState } from 'react'
 //import { info, errorInfo } from '../utils/logger'
 import blogService from '../services/blogs'
-import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from 'react/cjs/react.production.min'
+import _ from 'lodash'
 
 const Display = ({displayState,invert=false,style,children})=>{
   style = style ? style : {}
@@ -15,8 +15,20 @@ const Display = ({displayState,invert=false,style,children})=>{
   )
 }
 
-const Blog = ({ blog }) => {
+
+const Blog = ({ blog,blogs,setBlogs }) => {
   const [viewDetails,setViewDetails] = useState(false)
+
+  const likeit = async ()=>{
+    const modified = {...blog}
+    modified.likes++
+    const updated = await blogService.updateBlog(modified)
+    const ind = _.findIndex(blogs,{id:updated.id})
+    blogs = [...blogs]
+    blogs.splice(ind,1,updated)
+    setBlogs(blogs)
+  }
+
   const style = {
     borderStyle:'solid',
     borderWidth:'1px',
@@ -25,17 +37,17 @@ const Blog = ({ blog }) => {
   return (
     <div style={style}>
       {blog.title} {blog.author}
-      <Display displayState={viewDetails} invert={true} style={{display:'inline'}}>
+      <Display displayState={viewDetails} invert={true} style={{display:'inline'}} >
         <button onClick={()=>setViewDetails(true)}>view</button>
       </Display>
-      <Display displayState={viewDetails} invert={false} style={{display:'inline'}}>
+      <Display displayState={viewDetails} invert={false} style={{display:'inline'}} >
         <button onClick={()=>setViewDetails(false)}>hide</button>
       </Display>      
 
-      <Display displayState={viewDetails}>
+      <Display displayState={viewDetails} >
         {blog.url}
         <div>
-          likes {blog.likes} <button>like</button>
+          likes {blog.likes} <button onClick={likeit}>like</button>
         </div>
         <div>
           {blog.user ? blog.user.name : ''}
@@ -126,7 +138,7 @@ const AddBlog = ({ params }) => {
 }
 
 export const LoggedIn = ({ params }) => {
-  const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp } = params
+  const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp,setBlogs } = params
   const [blogFormShow,setBlogFormShow] = useState(false)
 
   const logoutClick = async event => {
@@ -149,7 +161,7 @@ export const LoggedIn = ({ params }) => {
         <button onClick={()=>setBlogFormShow(true)}>Create New Blog</button>
       </Display>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}/>
       )}
     </div>
   )

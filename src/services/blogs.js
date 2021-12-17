@@ -21,6 +21,17 @@ const addBlog = async (loggedInUser,newBlog)=>{
   }
 }
 
-const toExport = {getAll,addBlog}
+const updateBlog = async (updatedBlog)=>{
+  try {
+    updatedBlog.user = updatedBlog.user.id
+    const url = `${baseUrl}/${updatedBlog.id}`
+    const resp = await axios.put(url,updatedBlog)
+    return resp.data
+  } catch(error) {
+    throw new Error(JSON.stringify(error.response.data))
+  }
+}
+
+const toExport = {getAll,addBlog,updateBlog}
 
 export default toExport
