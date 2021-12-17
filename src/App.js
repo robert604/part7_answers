@@ -1,17 +1,17 @@
-import React, { useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 //import {info} from './utils/logger'
-import {LoggedIn,LoggedOut, Notification} from './components/comps'
+import { LoggedIn,LoggedOut, Notification } from './components/comps'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [usernamePassword, setUsernamePassword] = useState({username:'',password:''})
+  const [usernamePassword, setUsernamePassword] = useState({ username:'',password:'' })
   const [loggedInUser,setLoggedInUser] = useState(null)
   const [notification,setNotification] = useState(null)
 
-  const setNotificationTemp = notification=>{
+  const setNotificationTemp = notification => {
     setNotification(notification)
-    setTimeout(()=>setNotification(null),5000)
+    setTimeout(() => setNotification(null),5000)
   }
 
   const uiParams = {
@@ -27,9 +27,8 @@ const App = () => {
     if(user) user = JSON.parse(user)
     setLoggedInUser(user)
     blogService.getAll().then(blogs => {
-        setBlogs( blogs )
-      }
-    )  
+      setBlogs( blogs )
+    })
   }, [])
 
   return (

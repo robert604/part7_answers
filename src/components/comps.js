@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 
 
 
-const Display = ({displayState,invert=false,style,children})=>{
+const Display = ({ displayState,invert=false,style,children }) => {
   style = style ? style : {}
   if((displayState && invert) || (!displayState && !invert)) style.display='none'
 
@@ -22,33 +22,33 @@ Display.propTypes = {
   displayState: PropTypes.bool.isRequired,
 }
 
-const Blog = ({params}) => {
+const Blog = ({ params }) => {
   let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp } = params
   const [viewDetails,setViewDetails] = useState(false)
   const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
 
-  const likeit = async ()=>{
-    const modified = {...blog}
+  const likeit = async () => {
+    const modified = { ...blog }
     modified.likes++
     const updated = await blogService.updateBlog(modified)
-    const ind = _.findIndex(blogs,{id:updated.id})
+    const ind = _.findIndex(blogs,{ id:updated.id })
     blogs = [...blogs]
     blogs.splice(ind,1,updated)
     setBlogs(blogs)
   }
 
-  const deleteIt = async ()=>{
+  const deleteIt = async () => {
     try {
       const confirmed = await window.confirm(`delete blog ${blog.title} by ${blog.author}`)
       if(confirmed) {
         await blogService.deleteBlog(blog,loggedInUser)
-        const ind = _.findIndex(blogs,{id:blog.id})
+        const ind = _.findIndex(blogs,{ id:blog.id })
         blogs = [...blogs]
         blogs.splice(ind,1)
         setBlogs(blogs)
       }
     } catch(error) {
-      setNotificationTemp({text:error.message,isError:true})
+      setNotificationTemp({ text:error.message,isError:true })
     }
   }
 
@@ -60,12 +60,12 @@ const Blog = ({params}) => {
   return (
     <div style={style}>
       {blog.title} {blog.author}
-      <Display displayState={viewDetails} invert={true} style={{display:'inline'}} >
-        <button onClick={()=>setViewDetails(true)}>view</button>
+      <Display displayState={viewDetails} invert={true} style={{ display:'inline' }} >
+        <button onClick={() => setViewDetails(true)}>view</button>
       </Display>
-      <Display displayState={viewDetails} invert={false} style={{display:'inline'}} >
-        <button onClick={()=>setViewDetails(false)}>hide</button>
-      </Display>      
+      <Display displayState={viewDetails} invert={false} style={{ display:'inline' }} >
+        <button onClick={() => setViewDetails(false)}>hide</button>
+      </Display>
 
       <Display displayState={viewDetails} >
         {blog.url}
@@ -76,7 +76,7 @@ const Blog = ({params}) => {
           {blog.user ? blog.user.name : ''}
         </div>
         <Display displayState={isOwner}>
-          <button onClick={deleteIt} style={{background:'lightblue'}}>delete</button>
+          <button onClick={deleteIt} style={{ background:'lightblue' }}>delete</button>
         </Display>
       </Display>
     </div>
@@ -126,7 +126,7 @@ export const LoggedOut = ({ params }) => {
 }
 
 const AddBlog = ({ params }) => {
-  const { setBlogs, blogs, loggedInUser, setNotificationTemp,setBlogFormShow} = params
+  const { setBlogs, blogs, loggedInUser, setNotificationTemp,setBlogFormShow } = params
   const [newBlogInfo, setNewBlogInfo] = useState({ title: '', author: '', url: '' })
   const titleChange = event => {
     const nbi = { ...newBlogInfo, title: event.target.value }
@@ -167,9 +167,9 @@ export const LoggedIn = ({ params }) => {
   const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp } = params
   const [blogFormShow,setBlogFormShow] = useState(false)
 
-  blogs.sort((a,b)=>a.likes-b.likes)
+  blogs.sort((a,b) => a.likes-b.likes)
 
-  const logoutClick = async event => {
+  const logoutClick = async () => {
     window.localStorage.setItem('loggedInUser', null)
     setLoggedInUser(null)
     setNotificationTemp({ text: 'Logged out', isError: false })
@@ -182,14 +182,14 @@ export const LoggedIn = ({ params }) => {
         <button onClick={logoutClick}>Log out</button>
       </div>
       <Display displayState={blogFormShow}>
-        <AddBlog params={{...params,setBlogFormShow}}/>
-        <button onClick={()=>setBlogFormShow(false)}>CANCEL</button>
+        <AddBlog params={{ ...params,setBlogFormShow }}/>
+        <button onClick={() => setBlogFormShow(false)}>CANCEL</button>
       </Display>
       <Display displayState={blogFormShow} invert={true}>
-        <button onClick={()=>setBlogFormShow(true)}>Create New Blog</button>
+        <button onClick={() => setBlogFormShow(true)}>Create New Blog</button>
       </Display>
       {blogs.map(blog =>
-        <Blog key={blog.id} params={{...params,blog:blog}}/>
+        <Blog key={blog.id} params={{ ...params,blog:blog }}/>
       )}
     </div>
   )

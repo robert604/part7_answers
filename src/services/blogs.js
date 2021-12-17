@@ -7,7 +7,7 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const addBlog = async (loggedInUser,newBlog)=>{
+const addBlog = async (loggedInUser,newBlog) => {
   const config = {
     headers:{
       Authorization:`Bearer ${loggedInUser.token}`
@@ -15,13 +15,13 @@ const addBlog = async (loggedInUser,newBlog)=>{
   }
   try {
     const resp = await axios.post(baseUrl,newBlog,config)
-    return resp.data    
+    return resp.data
   } catch(error) {
     throw new Error(JSON.stringify(error.response.data))
   }
 }
 
-const updateBlog = async (updatedBlog)=>{
+const updateBlog = async (updatedBlog) => {
   try {
     updatedBlog.user = updatedBlog.user.id
     const url = `${baseUrl}/${updatedBlog.id}`
@@ -32,12 +32,12 @@ const updateBlog = async (updatedBlog)=>{
   }
 }
 
-const deleteBlog = async (blog,loggedInUser)=>{
+const deleteBlog = async (blog,loggedInUser) => {
   const config = {
     headers:{
       Authorization:`Bearer ${loggedInUser.token}`
     }
-  }  
+  }
   try {
     const url = `${baseUrl}/${blog.id}`
     await axios.delete(url,config)
@@ -46,6 +46,6 @@ const deleteBlog = async (blog,loggedInUser)=>{
   }
 }
 
-const toExport = {getAll,addBlog,updateBlog,deleteBlog}
+const toExport = { getAll,addBlog,updateBlog,deleteBlog }
 
 export default toExport
