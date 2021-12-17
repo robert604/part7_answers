@@ -2,9 +2,12 @@ import { login } from '../services/login'
 import React, { useState } from 'react'
 //import { info, errorInfo } from '../utils/logger'
 import blogService from '../services/blogs'
+import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from 'react/cjs/react.production.min'
 
-const Display = ({displayState,invert=false,children})=>{
-  const style = invert ? {display:displayState ? 'none' : ''} : {display:displayState ? '' : 'none'}
+const Display = ({displayState,invert=false,style,children})=>{
+  style = style ? style : {}
+  if((displayState && invert) || (!displayState && !invert)) style.display='none'
+
   return (
     <div style={style}>
       {children}
@@ -13,9 +16,31 @@ const Display = ({displayState,invert=false,children})=>{
 }
 
 const Blog = ({ blog }) => {
+  const [viewDetails,setViewDetails] = useState(false)
+  const style = {
+    borderStyle:'solid',
+    borderWidth:'1px',
+    marginBottom:'5px'
+  }
   return (
-    <div>
+    <div style={style}>
       {blog.title} {blog.author}
+      <Display displayState={viewDetails} invert={true} style={{display:'inline'}}>
+        <button onClick={()=>setViewDetails(true)}>view</button>
+      </Display>
+      <Display displayState={viewDetails} invert={false} style={{display:'inline'}}>
+        <button onClick={()=>setViewDetails(false)}>hide</button>
+      </Display>      
+
+      <Display displayState={viewDetails}>
+        {blog.url}
+        <div>
+          likes {blog.likes} <button>like</button>
+        </div>
+        <div>
+          {blog.user ? blog.user.name : ''}
+        </div>
+      </Display>
     </div>
   )
 }
