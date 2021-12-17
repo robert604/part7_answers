@@ -1,40 +1,16 @@
 import { login } from '../services/login'
-import React, { useState, useRef, useImperativeHandle } from 'react'
+import React, { useState } from 'react'
 //import { info, errorInfo } from '../utils/logger'
 import blogService from '../services/blogs'
 
-const Toggleable = React.forwardRef(( props, ref ) => {
-  const { buttonLabel, initialVisibility, children} = props
-  const [visibility, setVisibility] = useState(initialVisibility)
-  const childrenStyle = { display: visibility ? '' : 'none' }
-  const buttonStyle = { display: visibility ? 'none' : '' }
-
-  const makeVisible = () => setVisibility(true)
-  const makeInvisible = () => setVisibility(false)
-  const setCompVisibility = (v) => {
-    setVisibility(v)
-  }
-
-  useImperativeHandle(ref,() => {
-    return {
-      setCompVisibility
-    }
-  })
-
+const Display = ({displayState,invert=false,children})=>{
+  const style = invert ? {display:displayState ? 'none' : ''} : {display:displayState ? '' : 'none'}
   return (
-    <div>
-      <div style={childrenStyle}>
-        {children}
-      </div>
-      <div style={buttonStyle}>
-        <button onClick={makeVisible}>{buttonLabel}</button>
-      </div>
-      <div style={childrenStyle}>
-        <button onClick={makeInvisible}>Cancel</button>
-      </div>
+    <div style={style}>
+      {children}
     </div>
   )
-})
+}
 
 const Blog = ({ blog }) => {
   return (
@@ -87,7 +63,7 @@ export const LoggedOut = ({ params }) => {
 }
 
 const AddBlog = ({ params }) => {
-  const { setBlogs, blogs, loggedInUser, setNotificationTemp, newBlogFormRef } = params
+  const { setBlogs, blogs, loggedInUser, setNotificationTemp,setBlogFormShow} = params
   const [newBlogInfo, setNewBlogInfo] = useState({ title: '', author: '', url: '' })
   const titleChange = event => {
     const nbi = { ...newBlogInfo, title: event.target.value }
@@ -105,7 +81,7 @@ const AddBlog = ({ params }) => {
     event.preventDefault()
     try {
       const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
-      newBlogFormRef.current.setCompVisibility(false)
+      setBlogFormShow(false)
       setBlogs(blogs.concat(blog))
       setNewBlogInfo({ title: '', author: '', url: '' })
       setNotificationTemp({ text: `added blog ${blog.title} by ${blog.author}`, isError: false })
@@ -126,6 +102,7 @@ const AddBlog = ({ params }) => {
 
 export const LoggedIn = ({ params }) => {
   const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp } = params
+  const [blogFormShow,setBlogFormShow] = useState(false)
 
   const logoutClick = async event => {
     window.localStorage.setItem('loggedInUser', null)
@@ -133,18 +110,19 @@ export const LoggedIn = ({ params }) => {
     setNotificationTemp({ text: 'Logged out', isError: false })
   }
 
-  const newBlogFormRef = useRef()
-
   return (
     <div>
       <div style={{ marginBottom: '20px' }}>
         {`${loggedInUser.name} logged in `}
         <button onClick={logoutClick}>Log out</button>
       </div>
-      <Toggleable buttonLabel='Create new blog' initialVisibility={false} ref={newBlogFormRef}>
-
-        <AddBlog params={{ ...params, newBlogFormRef }} />
-      </Toggleable>
+      <Display displayState={blogFormShow}>
+        <AddBlog params={{...params,setBlogFormShow}}/>
+        <button onClick={()=>setBlogFormShow(false)}>CANCEL</button>
+      </Display>
+      <Display displayState={blogFormShow} invert={true}>
+        <button onClick={()=>setBlogFormShow(true)}>Create New Blog</button>
+      </Display>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
