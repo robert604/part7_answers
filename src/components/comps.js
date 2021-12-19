@@ -22,7 +22,7 @@ Display.propTypes = {
   displayState: PropTypes.bool.isRequired,
 }
 
-const Blog = ({ params }) => {
+export const Blog = ({ params }) => {
   let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp } = params
   const [viewDetails,setViewDetails] = useState(false)
   const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
