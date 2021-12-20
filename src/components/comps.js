@@ -23,18 +23,12 @@ Display.propTypes = {
 }
 
 export const Blog = ({ params }) => {
-  let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp } = params
+  let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp,likeIt } = params
   const [viewDetails,setViewDetails] = useState(false)
   const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
 
-  const likeit = async () => {
-    const modified = { ...blog }
-    modified.likes++
-    const updated = await blogService.updateBlog(modified)
-    const ind = _.findIndex(blogs,{ id:updated.id })
-    blogs = [...blogs]
-    blogs.splice(ind,1,updated)
-    setBlogs(blogs)
+  const likeHandler = () => {
+    likeIt(blog,blogs,setBlogs)
   }
 
   const deleteIt = async () => {
@@ -70,7 +64,7 @@ export const Blog = ({ params }) => {
       <Display displayState={viewDetails} >
         {blog.url}
         <div>
-          likes {blog.likes} <button onClick={likeit}>like</button>
+          likes {blog.likes} <button onClick={likeHandler}>like</button>
         </div>
         <div>
           {blog.user ? blog.user.name : ''}
@@ -175,6 +169,16 @@ export const LoggedIn = ({ params }) => {
     setNotificationTemp({ text: 'Logged out', isError: false })
   }
 
+  const likeIt = async (blog,blogs,setBlogs) => {
+    const modified = { ...blog }
+    modified.likes++
+    const updated = await blogService.updateBlog(modified)
+    const ind = _.findIndex(blogs,{ id:updated.id })
+    blogs = [...blogs]
+    blogs.splice(ind,1,updated)
+    setBlogs(blogs)
+  }
+
   return (
     <div>
       <div style={{ marginBottom: '20px' }}>
@@ -189,7 +193,7 @@ export const LoggedIn = ({ params }) => {
         <button onClick={() => setBlogFormShow(true)}>Create New Blog</button>
       </Display>
       {blogs.map(blog =>
-        <Blog key={blog.id} params={{ ...params,blog:blog }}/>
+        <Blog key={blog.id} params={{ ...params,blog:blog,likeIt:likeIt }}/>
       )}
     </div>
   )

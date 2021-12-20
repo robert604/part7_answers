@@ -39,3 +39,14 @@ test('url and likes also shown when button clicked',()=>{
   expect(comp.getByText('blog url')).toBeVisible()
   expect(comp.getByText('likes 100')).toBeVisible()
 })
+
+test('2 clicks of like button results in 2 calls to handler',()=>{
+  const likeIt = jest.fn()
+  const comp = render(
+    <Blog params={{blog,likeIt}}/>
+  )
+  const likeButton = comp.getByText('like')
+  fireEvent.click(likeButton)
+  fireEvent.click(likeButton)
+  expect(likeIt.mock.calls).toHaveLength(2)
+})
