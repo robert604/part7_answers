@@ -27,6 +27,8 @@ export const Blog = ({ params }) => {
   const [viewDetails,setViewDetails] = useState(false)
   const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
 
+  //console.log('making blog',blog,loggedInUser)
+
   const likeHandler = () => {
     likeIt(blog,blogs,setBlogs)
   }
@@ -119,8 +121,8 @@ export const LoggedOut = ({ params }) => {
   )
 }
 
-const AddBlog = ({ params }) => {
-  const { setBlogs, blogs, loggedInUser, setNotificationTemp,setBlogFormShow } = params
+export const AddBlog = ({ params }) => {
+  const { addBlogClick } = params
   const [newBlogInfo, setNewBlogInfo] = useState({ title: '', author: '', url: '' })
   const titleChange = event => {
     const nbi = { ...newBlogInfo, title: event.target.value }
@@ -134,25 +136,20 @@ const AddBlog = ({ params }) => {
     const nbi = { ...newBlogInfo, url: event.target.value }
     setNewBlogInfo(nbi)
   }
-  const addBlogClick = async event => {
+
+  const addBlogHandler = (event) => {
     event.preventDefault()
-    try {
-      const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
-      setBlogFormShow(false)
-      setBlogs(blogs.concat(blog))
-      setNewBlogInfo({ title: '', author: '', url: '' })
-      setNotificationTemp({ text: `added blog ${blog.title} by ${blog.author}`, isError: false })
-    } catch (error) {
-      setNotificationTemp({ text: JSON.stringify(error.message), isError: true })
-    }
+    console.log('addbloghandler',params)
+    addBlogClick({ ...params,newBlogInfo,setNewBlogInfo } )
   }
+
   return (
-    <form>
+    <form id='addBlogForm' onSubmit={addBlogHandler}>
       <h2>add new</h2>
-      <div>title <input value={newBlogInfo.title} onChange={titleChange} /></div>
-      <div>author <input value={newBlogInfo.author} onChange={authorChange} /></div>
-      <div>url <input value={newBlogInfo.url} onChange={urlChange} /></div>
-      <button onClick={addBlogClick}>add new blog</button>
+      <div>title <input id='title' value={newBlogInfo.title} onChange={titleChange} /></div>
+      <div>author <input id='author' value={newBlogInfo.author} onChange={authorChange} /></div>
+      <div>url <input id='url' value={newBlogInfo.url} onChange={urlChange} /></div>
+      <button type='submit'>add new blog</button>
     </form>
   )
 }
@@ -179,6 +176,20 @@ export const LoggedIn = ({ params }) => {
     setBlogs(blogs)
   }
 
+  const addBlogClick = async (params) => {
+    const { setBlogs, blogs, loggedInUser, setNotificationTemp,setBlogFormShow,newBlogInfo,setNewBlogInfo } = params
+
+    try {
+      const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
+      setBlogFormShow(false)
+      setBlogs(blogs.concat(blog))
+      setNewBlogInfo({ title: '', author: '', url: '' })
+      setNotificationTemp({ text: `added blog ${blog.title} by ${blog.author}`, isError: false })
+    } catch (error) {
+      setNotificationTemp({ text: JSON.stringify(error.message), isError: true })
+    }
+  }
+
   return (
     <div>
       <div style={{ marginBottom: '20px' }}>
@@ -186,7 +197,7 @@ export const LoggedIn = ({ params }) => {
         <button onClick={logoutClick}>Log out</button>
       </div>
       <Display displayState={blogFormShow}>
-        <AddBlog params={{ ...params,setBlogFormShow }}/>
+        <AddBlog params={{ ...params,setBlogFormShow,addBlogClick }}/>
         <button onClick={() => setBlogFormShow(false)}>CANCEL</button>
       </Display>
       <Display displayState={blogFormShow} invert={true}>
