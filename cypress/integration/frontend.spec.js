@@ -72,15 +72,48 @@ describe('blog app',() => {
       cy.get('#password').type('testpassword')
       cy.get('#login-button').click()    
     })
-    it('create new blog',() => {
+    it('can create new blog',() => {
       cy.get('#createnewblog').click()
       cy.get('#title').type('new blog title')
       cy.get('#author').type('new blog author')
       cy.get('#url').type('new blog url')
       cy.get('#addnewblog').click()
+
+      cy.get('#createnewblog').click()
+      cy.get('#title').type('new2 blog title')
+      cy.get('#author').type('new2 blog author')
+      cy.get('#url').type('new2 blog url')
+      cy.get('#addnewblog').click()
+
       cy.get('html')
-      .should('contain','new blog title')
-      .should('contain','new blog author')
+      .should('contain','new2 blog title')
+      .should('contain','new2 blog author')
+    })
+
+    it.only('can like a blog',() => {
+      cy.get('#createnewblog').click()
+      cy.get('#title').type('new3 blog title')
+      cy.get('#author').type('new3 blog author')
+      cy.get('#url').type('new3 blog url')
+      cy.get('#addnewblog').click()
+
+      cy.get('#view').click()
+      cy.get('html').should('contain','likes 0')
+      cy.get('#like').click()
+      cy.get('html').should('contain','likes 1')
+    })
+
+    it('can delete own blog',() => {
+      cy.get('#createnewblog').click()
+      cy.get('#title').type('new blog title')
+      cy.get('#author').type('new blog author')
+      cy.get('#url').type('new blog url')
+      cy.get('#addnewblog').click()
+      cy.contains('new blog title')
+      cy.get('#view').click()
+      cy.get('#delete').click()
+      cy.get('html')
+      .should('not.contain','new blog title')
     })
   })
 })

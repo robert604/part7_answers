@@ -57,22 +57,22 @@ export const Blog = ({ params }) => {
     <div style={style}>
       {blog.title} {blog.author}
       <Display displayState={viewDetails} invert={true} style={{ display:'inline' }} >
-        <button onClick={() => setViewDetails(true)}>view</button>
+        <button id='view' onClick={() => setViewDetails(true)}>view</button>
       </Display>
       <Display displayState={viewDetails} invert={false} style={{ display:'inline' }} >
-        <button onClick={() => setViewDetails(false)}>hide</button>
+        <button id='hide' onClick={() => setViewDetails(false)}>hide</button>
       </Display>
 
       <Display displayState={viewDetails} >
         {blog.url}
         <div>
-          likes {blog.likes} <button onClick={likeHandler}>like</button>
+          likes {blog.likes} <button id='like' onClick={likeHandler}>like</button>
         </div>
         <div>
           {blog.user ? blog.user.name : ''}
         </div>
         <Display displayState={isOwner}>
-          <button onClick={deleteIt} style={{ background:'lightblue' }}>delete</button>
+          <button id='delete' onClick={deleteIt} style={{ background:'lightblue' }}>delete</button>
         </Display>
       </Display>
     </div>
