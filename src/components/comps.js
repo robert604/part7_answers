@@ -149,7 +149,7 @@ export const AddBlog = ({ params }) => {
       <div>title <input id='title' value={newBlogInfo.title} onChange={titleChange} /></div>
       <div>author <input id='author' value={newBlogInfo.author} onChange={authorChange} /></div>
       <div>url <input id='url' value={newBlogInfo.url} onChange={urlChange} /></div>
-      <button type='submit'>add new blog</button>
+      <button id='addnewblog' type='submit'>add new blog</button>
     </form>
   )
 }
@@ -201,7 +201,7 @@ export const LoggedIn = ({ params }) => {
         <button onClick={() => setBlogFormShow(false)}>CANCEL</button>
       </Display>
       <Display displayState={blogFormShow} invert={true}>
-        <button onClick={() => setBlogFormShow(true)}>Create New Blog</button>
+        <button id='createnewblog' onClick={() => setBlogFormShow(true)}>Create New Blog</button>
       </Display>
       {blogs.map(blog =>
         <Blog key={blog.id} params={{ ...params,blog:blog,likeIt:likeIt }}/>
