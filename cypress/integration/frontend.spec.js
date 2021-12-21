@@ -90,7 +90,7 @@ describe('blog app',() => {
       .should('contain','new2 blog author')
     })
 
-    it.only('can like a blog',() => {
+    it('can like a blog',() => {
       cy.get('#createnewblog').click()
       cy.get('#title').type('new3 blog title')
       cy.get('#author').type('new3 blog author')
@@ -103,7 +103,7 @@ describe('blog app',() => {
       cy.get('html').should('contain','likes 1')
     })
 
-    it('can delete own blog',() => {
+    it.only('can delete own blog',() => {
       cy.get('#createnewblog').click()
       cy.get('#title').type('new blog title')
       cy.get('#author').type('new blog author')
