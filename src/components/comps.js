@@ -109,13 +109,13 @@ export const LoggedOut = ({ params }) => {
     <form>
       <h2>Login</h2>
       <div>
-        Username: <input value={usernamePassword.username} onChange={usernameChange} />
+        Username: <input id='username' value={usernamePassword.username} onChange={usernameChange} />
       </div>
       <div>
-        Password: <input value={usernamePassword.password} onChange={passwordChange} />
+        Password: <input id='password' value={usernamePassword.password} onChange={passwordChange} />
       </div>
       <div>
-        <button type='submit' onClick={loginClick}>Login</button>
+        <button id='login-button' type='submit' onClick={loginClick}>Login</button>
       </div>
     </form>
   )
@@ -222,6 +222,6 @@ export const Notification = ({ notification }) => {
     padding: '10px',
     fontSize: '20px'
   }
-  return <div style={style}>{text}</div>
+  return <div id='notification' style={style}>{text}</div>
 }
 
