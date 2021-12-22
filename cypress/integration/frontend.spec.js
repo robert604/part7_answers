@@ -103,7 +103,7 @@ describe('blog app',() => {
       cy.get('html').should('contain','likes 1')
     })
 
-    it.only('can delete own blog',() => {
+    it('can delete own blog',() => {
       cy.get('#createnewblog').click()
       cy.get('#title').type('new blog title')
       cy.get('#author').type('new blog author')
@@ -114,6 +114,54 @@ describe('blog app',() => {
       cy.get('#delete').click()
       cy.get('html')
       .should('not.contain','new blog title')
+    })
+
+    it.only('blogs ordered by decreasing likes',() => {
+      cy.get('#createnewblog').click()
+      cy.get('#title').type('new blog title')
+      cy.get('#author').type('new blog author')
+      cy.get('#url').type('new blog url')
+      cy.get('#addnewblog').click()
+
+      cy.get('#createnewblog').click()
+      cy.get('#title').type('new2 blog title')
+      cy.get('#author').type('new2 blog author')
+      cy.get('#url').type('new2 blog url')
+      cy.get('#addnewblog').click()
+
+      cy.get('#createnewblog').click()
+      cy.get('#title').type('new3 blog title')
+      cy.get('#author').type('new3 blog author')
+      cy.get('#url').type('new3 blog url')
+      cy.get('#addnewblog').click()
+      
+      cy.contains('CANCEL').click()
+
+      cy.get('.blog').contains('new blog title').as('blog1')
+      cy.get('@blog1').contains('view').click()
+      cy.get('@blog1').contains('like').click()
+      cy.get('@blog1').contains('like').click()
+      cy.get('@blog1').contains('like').click()            
+
+      cy.get('.blog').contains('new2 blog title').as('blog2')
+      cy.get('@blog2').contains('view').click()
+      cy.get('@blog2').contains('like').click()
+      cy.get('@blog2').contains('like').click()  
+      cy.get('@blog2').contains('like').click()
+      cy.get('@blog2').contains('like').click()           
+
+      cy.get('.blog').contains('new3 blog title').as('blog3')
+      cy.get('@blog3').contains('view').click()
+      cy.get('@blog3').contains('like').click()      
+
+      cy.get('.likesDiv').then($likesdivs=>{
+        let aa = $likesdivs.map((ind,item)=>{
+          return item.textContent
+        })
+        aa = aa.toArray()
+        let sorted = aa.sort((b,a)=>a<b ? -1 : b<a ? 1 : 0)
+        cy.wrap(aa).should('equal',sorted)
+      })
     })
   })
 })

@@ -54,7 +54,7 @@ export const Blog = ({ params }) => {
     marginBottom:'5px'
   }
   return (
-    <div style={style}>
+    <div className='blog' style={style}>
       {blog.title} {blog.author}
       <Display displayState={viewDetails} invert={true} style={{ display:'inline' }} >
         <button id='view' onClick={() => setViewDetails(true)}>view</button>
@@ -65,7 +65,7 @@ export const Blog = ({ params }) => {
 
       <Display displayState={viewDetails} >
         {blog.url}
-        <div>
+        <div className='likesDiv'>
           likes {blog.likes} <button id='like' onClick={likeHandler}>like</button>
         </div>
         <div>
@@ -139,8 +139,9 @@ export const AddBlog = ({ params }) => {
 
   const addBlogHandler = (event) => {
     event.preventDefault()
-    console.log('addbloghandler',params)
+    //console.log('addbloghandler',params)
     addBlogClick({ ...params,newBlogInfo,setNewBlogInfo } )
+
   }
 
   return (
@@ -158,7 +159,7 @@ export const LoggedIn = ({ params }) => {
   const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp } = params
   const [blogFormShow,setBlogFormShow] = useState(false)
 
-  blogs.sort((a,b) => a.likes-b.likes)
+  blogs.sort((a,b) => b.likes-a.likes)
 
   const logoutClick = async () => {
     window.localStorage.setItem('loggedInUser', null)
