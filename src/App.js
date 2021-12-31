@@ -9,7 +9,7 @@ import {
 import {useField} from './hooks/index'
 
 const padding = {
-  padding: 5
+  padding: 2
 }
 const padbottom = {
   paddingBottom:10
@@ -63,14 +63,21 @@ const CreateNew = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
-      votes: 0
-    })
-
-    history.push('/')    
+    let val = document.activeElement['value'];
+    if(val==='submit') {    
+      props.addNew({
+        content: content.props.value,
+        author: author.props.value,
+        info: info.props.value,
+        votes: 0
+      })
+      history.push('/')
+    } else if(val==='reset') {
+      content.clear()
+      author.clear()
+      info.clear()
+      
+    } 
   }
 
   return (
@@ -79,17 +86,18 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' {...content} />
+          <input name='content' {...content.props} />
         </div>
         <div>
           author
-          <input name='author' {...author} />
+          <input name='author' {...author.props} />
         </div>
         <div>
           url for more info
-          <input name='info' {...info} />
+          <input name='info' {...info.props} />
         </div>
-        <button>create</button>
+        <button value='submit'>create</button>
+        <button value='reset'>reset</button>
       </form>
     </div>
   )

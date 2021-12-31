@@ -6,9 +6,16 @@ export const useField = (type) => {
     setValue(event.target.value)
   }
 
+  const clear = () => {
+    setValue('')
+  }
+
   return {
-    type,
-    value,
-    onChange
+    props: {
+      type,
+      value,
+      onChange
+    },
+    clear: clear
   }
 }
