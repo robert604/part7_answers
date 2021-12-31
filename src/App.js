@@ -15,8 +15,6 @@ const padbottom = {
   paddingBottom:10
 }
 
-
-
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
