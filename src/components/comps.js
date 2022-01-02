@@ -2,8 +2,12 @@ import { login } from '../services/login'
 import React, { useState } from 'react'
 //import { info, errorInfo } from '../utils/logger'
 import blogService from '../services/blogs'
-import _ from 'lodash'
+//import _ from 'lodash'
 import PropTypes from 'prop-types'
+import { blogsStore,updateBlog,deleteBlog,addBlog } from '../reducers/blogsReducer'
+import { credentialsStore, setCredentials, setUser } from '../reducers/credentialsReducer'
+import { notificationStore,startNotification } from '../reducers/notificationReducer'
+
 
 
 
@@ -23,14 +27,18 @@ Display.propTypes = {
 }
 
 export const Blog = ({ params }) => {
-  let { blog,blogs,setBlogs,loggedInUser,setNotificationTemp,likeIt } = params
+  let { blog,
+    likeIt } = params
   const [viewDetails,setViewDetails] = useState(false)
+
+  const loggedInUser = credentialsStore.getState().user
+
   const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
 
   //console.log('making blog',blog,loggedInUser)
 
   const likeHandler = () => {
-    likeIt(blog,blogs,setBlogs)
+    likeIt(blog)
   }
 
   const deleteIt = async () => {
@@ -38,13 +46,14 @@ export const Blog = ({ params }) => {
       const confirmed = await window.confirm(`delete blog ${blog.title} by ${blog.author}`)
       if(confirmed) {
         await blogService.deleteBlog(blog,loggedInUser)
-        const ind = _.findIndex(blogs,{ id:blog.id })
-        blogs = [...blogs]
-        blogs.splice(ind,1)
-        setBlogs(blogs)
+        blogsStore.dispatch(deleteBlog(blog))
+        //const ind = _.findIndex(blogs,{ id:blog.id })
+        //blogs = [...blogs]
+        //blogs.splice(ind,1)
+        //setBlogs(blogs)
       }
     } catch(error) {
-      setNotificationTemp({ text:error.message,isError:true })
+      startNotification({ text:error.message,isError:true })
     }
   }
 
@@ -79,27 +88,27 @@ export const Blog = ({ params }) => {
   )
 }
 
-export const LoggedOut = ({ params }) => {
-  const { usernamePassword, setUsernamePassword, setLoggedInUser, setNotificationTemp } = params
+export const LoggedOut = () => {
+  const credentials = credentialsStore.getState()
   const usernameChange = event => {
-    const up = { ...usernamePassword, username: event.target.value }
-    setUsernamePassword(up)
+    const up = { ...credentials, username: event.target.value }
+    credentialsStore.dispatch(setCredentials(up))
   }
   const passwordChange = event => {
-    const up = { ...usernamePassword, password: event.target.value }
-    setUsernamePassword(up)
+    const up = { ...credentials, password: event.target.value }
+    credentialsStore.dispatch(setCredentials(up))
   }
   const loginClick = async event => {
     try {
       event.preventDefault()
-      const user = await login(usernamePassword)
+      const user = await login(credentials)
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-      setLoggedInUser(user)
-      setUsernamePassword({ username: '', password: '' })
-      setNotificationTemp({ text: 'Login successful', isError: false })
+      credentialsStore.dispatch(setUser(user))
+      credentialsStore.dispatch(setCredentials({ username: '', password: '' }))
+      startNotification({ text: 'Login successful', isError: false })
     } catch (error) {
       if ('response' in error && error.response.status === 401) {
-        setNotificationTemp({ text: 'wrong username or password', isError: true })
+        startNotification({ text: 'wrong username or password', isError: true })
       } else {
         throw error
       }
@@ -109,10 +118,10 @@ export const LoggedOut = ({ params }) => {
     <form>
       <h2>Login</h2>
       <div>
-        Username: <input id='username' value={usernamePassword.username} onChange={usernameChange} />
+        Username: <input id='username' value={credentials.username} onChange={usernameChange} />
       </div>
       <div>
-        Password: <input id='password' value={usernamePassword.password} onChange={passwordChange} />
+        Password: <input id='password' value={credentials.password} onChange={passwordChange} />
       </div>
       <div>
         <button id='login-button' type='submit' onClick={loginClick}>Login</button>
@@ -139,7 +148,6 @@ export const AddBlog = ({ params }) => {
 
   const addBlogHandler = (event) => {
     event.preventDefault()
-    //console.log('addbloghandler',params)
     addBlogClick({ ...params,newBlogInfo,setNewBlogInfo } )
 
   }
@@ -155,39 +163,41 @@ export const AddBlog = ({ params }) => {
   )
 }
 
-export const LoggedIn = ({ params }) => {
-  const { setLoggedInUser, blogs, loggedInUser, setNotificationTemp } = params
+export const LoggedIn = () => {
   const [blogFormShow,setBlogFormShow] = useState(false)
 
+  const loggedInUser = credentialsStore.getState().user
+  const blogs = blogsStore.getState()
   blogs.sort((a,b) => b.likes-a.likes)
 
   const logoutClick = async () => {
     window.localStorage.setItem('loggedInUser', null)
-    setLoggedInUser(null)
-    setNotificationTemp({ text: 'Logged out', isError: false })
+    credentialsStore.dispatch(setUser(null))
+    startNotification({ text: 'Logged out', isError: false })
   }
 
-  const likeIt = async (blog,blogs,setBlogs) => {
+  const likeIt = async (blog) => {
     const modified = { ...blog }
     modified.likes++
     const updated = await blogService.updateBlog(modified)
-    const ind = _.findIndex(blogs,{ id:updated.id })
-    blogs = [...blogs]
-    blogs.splice(ind,1,updated)
-    setBlogs(blogs)
+    blogsStore.dispatch(updateBlog(updated))
+    //const ind = _.findIndex(blogs,{ id:updated.id })
+    //blogs = [...blogs]
+    //blogs.splice(ind,1,updated)
+    //setBlogs(blogs)
   }
 
   const addBlogClick = async (params) => {
-    const { setBlogs, blogs, loggedInUser, setNotificationTemp,setBlogFormShow,newBlogInfo,setNewBlogInfo } = params
+    const { setBlogFormShow,newBlogInfo,setNewBlogInfo } = params
 
     try {
       const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
       setBlogFormShow(false)
-      setBlogs(blogs.concat(blog))
+      blogsStore.dispatch(addBlog(blog))
       setNewBlogInfo({ title: '', author: '', url: '' })
-      setNotificationTemp({ text: `added blog ${blog.title} by ${blog.author}`, isError: false })
+      startNotification({ text: `added blog ${blog.title} by ${blog.author}`, isError: false })
     } catch (error) {
-      setNotificationTemp({ text: JSON.stringify(error.message), isError: true })
+      startNotification({ text: JSON.stringify(error.message), isError: true })
     }
   }
 
@@ -198,20 +208,21 @@ export const LoggedIn = ({ params }) => {
         <button onClick={logoutClick}>Log out</button>
       </div>
       <Display displayState={blogFormShow}>
-        <AddBlog params={{ ...params,setBlogFormShow,addBlogClick }}/>
+        <AddBlog params={{ setBlogFormShow,addBlogClick }}/>
         <button onClick={() => setBlogFormShow(false)}>CANCEL</button>
       </Display>
       <Display displayState={blogFormShow} invert={true}>
         <button id='createnewblog' onClick={() => setBlogFormShow(true)}>Create New Blog</button>
       </Display>
       {blogs.map(blog =>
-        <Blog key={blog.id} params={{ ...params,blog:blog,likeIt:likeIt }}/>
+        <Blog key={blog.id} params={{ blog:blog,likeIt:likeIt }}/>
       )}
     </div>
   )
 }
 
-export const Notification = ({ notification }) => {
+export const Notification = () => {
+  const notification = notificationStore.getState()
   if (!notification) return null
   const { text, isError } = notification
   const style = {
