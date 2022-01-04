@@ -164,14 +164,10 @@ export const LoggedIn = () => {
 
   const addBlogClick = async (params) => {
     const { newBlogInfo,setNewBlogInfo } = params
+    dispatch(addBlog(loggedInUser, newBlogInfo))
+    setBlogFormShow(false)
+    setNewBlogInfo({ title: '', author: '', url: '' })
 
-    try {
-      dispatch(addBlog(loggedInUser, newBlogInfo))
-      setBlogFormShow(false)
-      setNewBlogInfo({ title: '', author: '', url: '' })
-    } catch (error) {
-      dispatch(startNotification({ text: JSON.stringify(error.message), isError: true }))
-    }
   }
 
   return (

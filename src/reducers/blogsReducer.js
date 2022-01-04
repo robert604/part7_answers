@@ -56,18 +56,17 @@ export const likeBlog = blog => {
 
 export const addBlog = (loggedInUser, newBlogInfo) => {
   return async dispatch => {
-    const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
-    dispatch(startNotification({ text: `added blog ${blog.title} by ${blog.author}`, isError: false }))
-
-    dispatch({
-      type: 'ADDBLOG',
-      newBlog: blog
-    })
+    try {
+      const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
+      dispatch(startNotification({ text: `added blog ${blog.title} by ${blog.author}`, isError: false }))
+      dispatch({
+        type: 'ADDBLOG',
+        newBlog: blog
+      })
+    } catch(error) {
+      dispatch(startNotification({ text: JSON.stringify(error.message), isError: true }))
+    }
   }
-  /*return {
-    type: 'ADDBLOG',
-    newBlog: newBlog
-  }*/
 }
 
 export const initBlogs = blogs => {
