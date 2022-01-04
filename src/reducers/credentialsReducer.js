@@ -1,8 +1,9 @@
-import { createStore } from 'redux'
+import { startNotification } from './notificationReducer'
+import { login } from '../services/login'
 
 const initCredentials = { username:'',password:'', user:null }
 
-const credentialsReducer = (credentials=initCredentials,action) => {
+export const credentialsReducer = (credentials=initCredentials,action) => {
   switch(action.type) {
   case 'SETCREDENTIALS':
     credentials = { ...credentials,
@@ -12,6 +13,13 @@ const credentialsReducer = (credentials=initCredentials,action) => {
     return credentials
   case 'SETUSER':
     credentials = { ...credentials,
+      user:action.user
+    }
+    return credentials
+  case 'LOGIN':
+    credentials = { ...credentials,
+      username: action.username,
+      password: action.password,
       user:action.user
     }
     return credentials
@@ -34,5 +42,24 @@ export const setUser = user => {
   }
 }
 
-export const credentialsStore = createStore(credentialsReducer)
-
+export const loginUser = (credentials) => {
+  return async dispatch => {
+    try {
+      const user = await login(credentials)
+      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+      dispatch({
+        type: 'LOGIN',
+        username:'',
+        password:'',
+        user: user
+      })
+      dispatch(startNotification({ text: 'Login successful', isError: false }))
+    } catch (error) {
+      if ('response' in error && error.response.status === 401) {
+        dispatch(startNotification({ text: 'wrong username or password', isError: true }))
+      } else {
+        throw error
+      }
+    }
+  }
+}

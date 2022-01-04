@@ -1,8 +1,7 @@
-import { createStore } from 'redux'
 
 const initNotification = null
 
-const notificationReducer = (notification=initNotification,action) => {
+export const notificationReducer = (notification=initNotification,action) => {
   switch(action.type) {
   case 'SETNOTIFICATION':
     notification = action.notification
@@ -18,11 +17,12 @@ export const setNotification = (notification) => {
   }
 }
 
-export const notificationStore = createStore(notificationReducer)
-
 export const startNotification = notification => {
-  notificationStore.dispatch(setNotification(notification))
-  setTimeout(() => {
-    notificationStore.dispatch(setNotification(null))
-  },5000)
+  return dispatch => {
+    dispatch(setNotification(notification))
+    setTimeout(() => {
+      dispatch(setNotification(null))
+    },5000)
+  }
+
 }

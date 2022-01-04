@@ -1,18 +1,21 @@
 import _ from 'lodash'
-import { createStore } from 'redux'
+import blogService from '../services/blogs'
+import { startNotification } from './notificationReducer'
 
-const blogsReducer = (blogs=[],action) => {
+export const blogsReducer = (blogs=[],action) => {
   let ind
+  let replaceWith
   switch(action.type) {
   case 'DELETEBLOG':
     ind = _.findIndex(blogs,{ id:action.deletedBlog.id })
     blogs = [...blogs]
     blogs.splice(ind,1)
     return blogs
-  case 'UPDATEBLOG':
-    ind = _.findIndex(blogs,{ id:action.updatedBlog.id })
+  case 'LIKEBLOG':
+    ind = _.findIndex(blogs,{ id:action.likedBlog.id })
     blogs = [...blogs]
-    blogs.splice(ind,1,action.updatedBlog)
+    replaceWith = { ...blogs[ind],likes:action.likedBlog.likes }
+    blogs.splice(ind,1,replaceWith)
     return blogs
   case 'ADDBLOG':
     blogs = blogs.concat(action.newBlog)
@@ -25,25 +28,46 @@ const blogsReducer = (blogs=[],action) => {
   return blogs
 }
 
-export const deleteBlog = deletedBlog => {
-  return {
-    type: 'DELETEBLOG',
-    deletedBlog: deletedBlog
+export const deleteBlog = (blog,loggedInUser) => {
+  return async dispatch => {
+    try {
+      await blogService.deleteBlog(blog,loggedInUser)
+      dispatch({
+        type: 'DELETEBLOG',
+        deletedBlog: blog
+      })
+    } catch(error) {
+      dispatch(startNotification({ text:error.message,isError:true }))
+    }
   }
 }
 
-export const updateBlog = updatedBlog => {
-  return {
-    type: 'UPDATEBLOG',
-    updatedBlog: updatedBlog
+export const likeBlog = blog => {
+  return async dispatch => {
+    const modified = { ...blog }
+    modified.likes++
+    const updated = await blogService.updateBlog(modified)
+    dispatch({
+      type: 'LIKEBLOG',
+      likedBlog: updated
+    })
   }
 }
 
-export const addBlog = newBlog => {
-  return {
+export const addBlog = (loggedInUser, newBlogInfo) => {
+  return async dispatch => {
+    const blog = await blogService.addBlog(loggedInUser, newBlogInfo)
+    dispatch(startNotification({ text: `added blog ${blog.title} by ${blog.author}`, isError: false }))
+
+    dispatch({
+      type: 'ADDBLOG',
+      newBlog: blog
+    })
+  }
+  /*return {
     type: 'ADDBLOG',
     newBlog: newBlog
-  }
+  }*/
 }
 
 export const initBlogs = blogs => {
@@ -53,5 +77,4 @@ export const initBlogs = blogs => {
   }
 }
 
-export const blogsStore = createStore(blogsReducer)
 
