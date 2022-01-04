@@ -35,8 +35,6 @@ export const Blog = ({ params }) => {
 
   const isOwner = Boolean(blog.user && loggedInUser && loggedInUser.username===blog.user.username)
 
-  //console.log('making blog',blog,loggedInUser)
-
   const likeHandler = () => {
     likeIt(blog)
   }
