@@ -8,12 +8,13 @@ import { initBlogs } from './reducers/blogsReducer'
 import { setUser } from './reducers/credentialsReducer'
 import { useDispatch } from 'react-redux'
 import { Users,User } from './components/users'
+import { Blogs,BlogView } from './components/blogs'
 import {
   BrowserRouter as Router,
   Routes,
   Route
 } from 'react-router-dom'
-import { Blogs } from './components/blogs'
+
 
 
 
@@ -48,6 +49,7 @@ const App = () => {
           }/>
           <Route path='/users' element={ <Users /> }/>
           <Route path='/users/:id' element={ <User/> }/>
+          <Route path='/blogs/:id' element={ <BlogView/> }/>
         </Routes>
       </Router>
     </div>
