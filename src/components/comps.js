@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 //import { info, errorInfo } from '../utils/logger'
 //import blogService from '../services/blogs'
-//import _ from 'lodash'
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import { likeBlog,deleteBlog,addBlog } from '../reducers/blogsReducer'
 import { setCredentials, setUser, loginUser } from '../reducers/credentialsReducer'
@@ -184,6 +184,27 @@ export const LoggedIn = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} params={{ blog:blog,likeIt:likeIt }}/>
       )}
+      <Users />
+    </div>
+  )
+}
+
+const Users = () => {
+  const blogs = useSelector(store => store.blogs)
+  const groups = _.groupBy(blogs,(blog) => blog.user.id)
+  const users = Object.values(groups).map(blogGroup => {
+    const firstBlog = blogGroup[0]
+    return {
+      id: firstBlog.user.id,
+      name: firstBlog.user.name,
+      count: blogGroup.length
+    }
+  })
+  return(
+    <div>
+      <h2>Users</h2>
+      <h3>Blogs created</h3>
+      { users.map(user => <div key={user.id}>{user.name} {user.count} </div> ) }
     </div>
   )
 }
