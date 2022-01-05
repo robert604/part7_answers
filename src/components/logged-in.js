@@ -4,10 +4,15 @@ import { startNotification } from '../reducers/notificationReducer'
 import { addBlog } from '../reducers/blogsReducer'
 import { setUser } from '../reducers/credentialsReducer'
 import { useDispatch,useSelector } from 'react-redux'
-
-
-
-
+import { Link } from 'react-router-dom'
+//<Link to='/'>blogs</Link>
+//<Link to='/users'>users</Link>
+/*
+<div style={{ marginBottom: '20px' }}>
+{`${loggedInUser.name} logged in `}
+<button onClick={logoutClick}>Log out</button>
+</div>
+*/
 export const LoggedIn = () => {
   const dispatch = useDispatch()
   const credentials = useSelector(store => store.credentials)
@@ -18,12 +23,18 @@ export const LoggedIn = () => {
     dispatch(setUser(null))
     dispatch(startNotification({ text: 'Logged out', isError: false }))
   }
+
+  const hspace = {
+    padding: '2px'
+  }
   if(loggedInUser) {
     return (
       <div>
-        <div style={{ marginBottom: '20px' }}>
-          {`${loggedInUser.name} logged in `}
-          <button onClick={logoutClick}>Log out</button>
+        <div style={{ marginBottom: '20px', backgroundColor:'lightGrey' }}>
+          <Link style={hspace} to={'/'}>blogs</Link>
+          <Link style={hspace} to='/users'>users</Link>
+          <span style={hspace}>{`${loggedInUser.name} logged in `}</span>
+          <button style={hspace} onClick={logoutClick}>Log out</button>
         </div>
       </div>
     )

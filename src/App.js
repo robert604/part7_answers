@@ -35,11 +35,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification/>
-      <LoggedIn />
-      <LoggedOut />
-
       <Router>
+        <Notification/>
+        <LoggedIn />
+        <LoggedOut />
         <Routes>
           <Route path='/' element={
             <div>
