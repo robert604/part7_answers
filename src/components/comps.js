@@ -6,6 +6,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { setCredentials, loginUser } from '../reducers/credentialsReducer'
 import { useDispatch,useSelector } from 'react-redux'
+import { Form,Alert } from 'react-bootstrap'
 
 
 
@@ -45,18 +46,20 @@ export const LoggedOut = () => {
   }
   if(!loggedInUser) {
     return (
-      <form>
-        <h2>Login</h2>
-        <div>
-          Username: <input id='username' value={credentials.username} onChange={usernameChange} />
-        </div>
-        <div>
-          Password: <input id='password' value={credentials.password} onChange={passwordChange} />
-        </div>
-        <div>
-          <button id='login-button' type='submit' onClick={loginClick}>Login</button>
-        </div>
-      </form>
+      <Form>
+        <Form.Group>
+          <h2>Login</h2>
+          <div>
+            Username: <input id='username' value={credentials.username} onChange={usernameChange} />
+          </div>
+          <div>
+            Password: <input id='password' value={credentials.password} onChange={passwordChange} />
+          </div>
+          <div>
+            <button id='login-button' type='submit' onClick={loginClick}>Login</button>
+          </div>
+        </Form.Group>
+      </Form>
     )
   }
   return null
@@ -70,7 +73,7 @@ export const Notification = () => {
   const notification = useSelector(store => store.notification)
   if (!notification) return null
   const { text, isError } = notification
-  const style = {
+  /*const style = {
     color: isError ? 'red' : 'green',
     background: 'lightgrey',
     borderStyle: 'solid',
@@ -78,7 +81,14 @@ export const Notification = () => {
     marginBottom: '10px',
     padding: '10px',
     fontSize: '20px'
-  }
-  return <div id='notification' style={style}>{text}</div>
+  }*/
+  //return <div id='notification' style={style}>{text}</div>
+  return(
+    <div className='container'>
+      <Alert variant={isError ? 'danger' : 'success'}>
+        {text}
+      </Alert>
+    </div>
+  )
 }
 

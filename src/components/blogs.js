@@ -3,6 +3,7 @@ import { deleteBlog,likeBlog,commentBlog } from '../reducers/blogsReducer'
 import { useDispatch,useSelector } from 'react-redux'
 import { Display } from './comps'
 import { Link,useParams } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 export const Blogs = () => {
   const credentials = useSelector(store => store.credentials)
@@ -12,7 +13,17 @@ export const Blogs = () => {
   if(loggedInUser) {
     return(
       <div>
-        { blogs.map(blog => <BlogLink key={blog.id} params={{ blog:blog }}/>) }
+        <Table striped>
+          <tbody>
+            { blogs.map(blog =>
+              <tr key={blog.id}>
+                <td>
+                  <BlogLink key={blog.id} params={{ blog:blog }}/>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
       </div>
     )
   }

@@ -33,7 +33,7 @@ const App = () => {
   }, [])
 
   return (
-    <div>
+    <div className='container'>
       <h2>blogs</h2>
       <Router>
         <Notification/>

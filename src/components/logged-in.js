@@ -5,14 +5,8 @@ import { addBlog } from '../reducers/blogsReducer'
 import { setUser } from '../reducers/credentialsReducer'
 import { useDispatch,useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-//<Link to='/'>blogs</Link>
-//<Link to='/users'>users</Link>
-/*
-<div style={{ marginBottom: '20px' }}>
-{`${loggedInUser.name} logged in `}
-<button onClick={logoutClick}>Log out</button>
-</div>
-*/
+import { Nav, Navbar } from 'react-bootstrap'
+
 export const LoggedIn = () => {
   const dispatch = useDispatch()
   const credentials = useSelector(store => store.credentials)
@@ -24,11 +18,12 @@ export const LoggedIn = () => {
     dispatch(startNotification({ text: 'Logged out', isError: false }))
   }
 
-  const hspace = {
-    padding: '2px'
-  }
+
   if(loggedInUser) {
-    return (
+    const hspace = {
+      padding: '2px'
+    }
+    /*return (
       <div>
         <div style={{ marginBottom: '20px', backgroundColor:'lightGrey' }}>
           <Link style={hspace} to={'/'}>blogs</Link>
@@ -37,6 +32,27 @@ export const LoggedIn = () => {
           <button style={hspace} onClick={logoutClick}>Log out</button>
         </div>
       </div>
+    )*/
+    return(
+      <Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
+        <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+        <Navbar.Collapse id='responsive-navbar-nav'>
+          <Nav className='mr-auto'>
+            <Nav.Link href='#' as='span'>
+              <Link style={hspace} to={'/'}>blogs</Link>
+            </Nav.Link>
+            <Nav.Link href='#' as='span'>
+              <Link style={hspace} to='/users'>users</Link>
+            </Nav.Link>
+            <Nav.Link href='#' as='span'>
+              <span style={hspace}>{`${loggedInUser.name} logged in `}</span>
+            </Nav.Link>
+            <Nav.Link href='#' as='span'>
+              <button style={hspace} onClick={logoutClick}>Log out</button>
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
     )
   }
   return null
