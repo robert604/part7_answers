@@ -17,6 +17,12 @@ export const blogsReducer = (blogs=[],action) => {
     replaceWith = { ...blogs[ind],likes:action.likedBlog.likes }
     blogs.splice(ind,1,replaceWith)
     return blogs
+  case 'COMMENTBLOG':
+    blogs = [...blogs]
+    ind = _.findIndex(blogs,{ id:action.commentedBlog.id })
+    replaceWith = { ...blogs[ind],comments:action.commentedBlog.comments }
+    blogs.splice(ind,1,replaceWith)
+    return blogs
   case 'ADDBLOG':
     blogs = blogs.concat(action.newBlog)
     return blogs
@@ -50,6 +56,16 @@ export const likeBlog = blog => {
     dispatch({
       type: 'LIKEBLOG',
       likedBlog: updated
+    })
+  }
+}
+
+export const commentBlog = (comment,blog,loggedInUser) => {
+  return async dispatch => {
+    const updated = await blogService.commentBlog(comment,blog,loggedInUser)
+    dispatch({
+      type: 'COMMENTBLOG',
+      commentedBlog: updated
     })
   }
 }

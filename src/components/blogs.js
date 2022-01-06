@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { deleteBlog,likeBlog } from '../reducers/blogsReducer'
+import { deleteBlog,likeBlog,commentBlog } from '../reducers/blogsReducer'
 import { useDispatch,useSelector } from 'react-redux'
 import { Display } from './comps'
 import { Link,useParams } from 'react-router-dom'
@@ -78,6 +78,14 @@ export const BlogView = () => {
   const loggedInUser = useSelector(store => store.credentials).user
   const blogs = useSelector(store => store.blogs)
   const blog = blogs.find(blog => blog.id===blogId)
+  const [commentText,setCommentText] = useState('')
+
+  const commentClick = event => {
+    event.preventDefault()
+    dispatch(commentBlog(commentText,blog,loggedInUser))
+    setCommentText('')
+  }
+
   if(loggedInUser && blog) {
     return(
       <div>
@@ -86,6 +94,10 @@ export const BlogView = () => {
         <div>{blog.likes} likes <button id='like' onClick={() => dispatch(likeBlog(blog))}>like</button></div>
         <div>added by {blog.user.name}</div>
         <h4>comments</h4>
+        <form>
+          <input value={commentText} onChange={event => setCommentText(event.target.value)}/>
+          <button onClick={commentClick}>add comment</button>
+        </form>
         <ul>
           {blog.comments.map((comment,index) => <li key={index}>{comment}</li>)}
         </ul>

@@ -46,6 +46,22 @@ const deleteBlog = async (blog,loggedInUser) => {
   }
 }
 
-const toExport = { getAll,addBlog,updateBlog,deleteBlog }
+const commentBlog = async (comment,blog,loggedInUser) => {
+  try {
+    const config = {
+      headers:{
+        Authorization: `Bearer ${loggedInUser.token}`
+      }
+    }
+    const url = `${baseUrl}/${blog.id}/comments`
+    const resp = await axios.post(url,{ comment:comment },config)
+    return resp.data
+  } catch(error) {
+    if(error.response && error.response.data) throw new Error(JSON.stringify(error.response.data))
+    throw error
+  }
+}
+
+const toExport = { getAll,addBlog,updateBlog,deleteBlog,commentBlog }
 
 export default toExport
