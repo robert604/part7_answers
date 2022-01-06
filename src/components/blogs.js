@@ -85,6 +85,10 @@ export const BlogView = () => {
         <div><a href={blog.url}>{blog.url}</a></div>
         <div>{blog.likes} likes <button id='like' onClick={() => dispatch(likeBlog(blog))}>like</button></div>
         <div>added by {blog.user.name}</div>
+        <h4>comments</h4>
+        <ul>
+          {blog.comments.map((comment,index) => <li key={index}>{comment}</li>)}
+        </ul>
       </div>
     )
   }
