@@ -23,16 +23,7 @@ export const LoggedIn = () => {
     const hspace = {
       padding: '2px'
     }
-    /*return (
-      <div>
-        <div style={{ marginBottom: '20px', backgroundColor:'lightGrey' }}>
-          <Link style={hspace} to={'/'}>blogs</Link>
-          <Link style={hspace} to='/users'>users</Link>
-          <span style={hspace}>{`${loggedInUser.name} logged in `}</span>
-          <button style={hspace} onClick={logoutClick}>Log out</button>
-        </div>
-      </div>
-    )*/
+
     return(
       <Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
         <Navbar.Toggle aria-controls='responsive-navbar-nav' />
